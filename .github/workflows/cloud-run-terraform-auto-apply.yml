@@ -1,0 +1,33 @@
+name: Auto Terraform Apply on Image Push
+
+on:
+  repository_dispatch:
+    types: [cloudbuild-image-pushed]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Terraform
+      uses: actions/checkout@v3
+
+    - name: Authenticate to GCP
+      uses: google-github-actions/auth@v1
+      with:
+        credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+
+    - name: Setup gcloud
+      uses: google-github-actions/setup-gcloud@v1
+
+    - name: Get Image Digest from Artifact Registry
+      id: digest
+      run: |
+        IMAGE="northamerica-northeast2-docker.pkg.dev/bluemind-d6c37/blue-mind-prod-repo-gcp/bluemind-app:${{ github.event.client_payload.sha }}"
+        DIGEST=$(gcloud artifacts docker images describe "$IMAGE" --format='value(image_summary.digest)')
+        echo "digest=northamerica-northeast2-docker.pkg.dev/bluemind-d6c37/blue-mind-prod-repo-gcp/bluemind-app@$DIGEST" >> "$GITHUB_OUTPUT"
+
+    - name: Terraform Init & Apply
+      run: |
+        terraform init
+        terraform apply -auto-approve -var="image_url=${{ steps.digest.outputs.digest }}"
