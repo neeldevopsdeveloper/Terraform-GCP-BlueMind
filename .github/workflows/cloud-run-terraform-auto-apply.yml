@@ -26,9 +26,12 @@ jobs:
       uses: hashicorp/setup-terraform@v2
       with:
         terraform_version: 1.6.6
+        cli_config_credentials: false
 
-    - name: Verify Terraform Installation
-      run: terraform version
+    - name: Check Terraform Version (verify installation)
+      run: |
+        which terraform
+        terraform version
 
     - name: Get Image Digest from Artifact Registry
       id: digest
