@@ -20,6 +20,11 @@ jobs:
     - name: Setup gcloud
       uses: google-github-actions/setup-gcloud@v1
 
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_version: 1.6.6  # ✅ You can change this if needed
+
     - name: Get Image Digest from Artifact Registry
       id: digest
       run: |
