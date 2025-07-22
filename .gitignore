@@ -1,4 +1,17 @@
-terraform.tfvars
+cat <<EOF > .gitignore
+# Terraform state
 *.tfstate
 *.tfstate.backup
+
+# Terraform secrets
+*.tfvars
+
+# Terraform internal folders
+.terraform/
+
+# Terraform plan files
+*.tfplan
+
+# Secret folders
 secrets/
+EOF
