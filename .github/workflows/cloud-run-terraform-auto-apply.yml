@@ -17,13 +17,18 @@ jobs:
       with:
         credentials_json: ${{ secrets.GCP_CREDENTIALS }}
 
-    - name: Setup gcloud
+    - name: Setup gcloud CLI
       uses: google-github-actions/setup-gcloud@v1
+      with:
+        version: 'latest'
 
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v2
       with:
         terraform_version: 1.6.6
+
+    - name: Verify Terraform Installation
+      run: terraform version
 
     - name: Get Image Digest from Artifact Registry
       id: digest
@@ -31,7 +36,7 @@ jobs:
         IMAGE="northamerica-northeast2-docker.pkg.dev/bluemind-d6c37/blue-mind-prod-repo-gcp/bluemind-app:${{ github.event.client_payload.sha }}"
         DIGEST=$(gcloud artifacts docker images describe "$IMAGE" --format='value(image_summary.digest)')
         FULL_IMAGE="northamerica-northeast2-docker.pkg.dev/bluemind-d6c37/blue-mind-prod-repo-gcp/bluemind-app@$DIGEST"
-        echo "digest=$FULL_IMAGE" >> $GITHUB_OUTPUT
+        echo "digest=$FULL_IMAGE" >> "$GITHUB_OUTPUT"
 
     - name: Terraform Init
       run: terraform init
