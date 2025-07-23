@@ -43,16 +43,20 @@ jobs:
 
     - name: List Terraform Files (debug)
       run: ls -al
-      # working-directory: ./Bluemind-cloudrun-terraform
+      working-directory: ./Bluemind-cloudrun-terraform
+
+    - name: Check for .tf files
+      run: |
+        find . -name "*.tf"
 
     - name: Terraform Init
       run: terraform init
-      # working-directory: ./Bluemind-cloudrun-terraform
+      working-directory: ./Bluemind-cloudrun-terraform
 
     - name: Terraform Plan
       run: terraform plan -var="image_url=${{ steps.digest.outputs.digest }}"
-      # working-directory: ./Bluemind-cloudrun-terraform
+      working-directory: ./Bluemind-cloudrun-terraform
 
     - name: Terraform Apply
       run: terraform apply -auto-approve -var="image_url=${{ steps.digest.outputs.digest }}"
-      # working-directory: ./Bluemind-cloudrun-terraform
+      working-directory: ./Bluemind-cloudrun-terraform
