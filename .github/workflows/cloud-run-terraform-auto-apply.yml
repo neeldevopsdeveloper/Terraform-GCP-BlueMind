@@ -46,18 +46,22 @@ jobs:
       working-directory: ./Bluemind-cloudrun-terraform
 
     - name: Check for .tf files
+      run: find . -name "*.tf"
+      working-directory: ./Bluemind-cloudrun-terraform
+
+    - name: Sanity check: Does Terraform folder exist?
       run: |
-       find . -name "*.tf"
-      working-directory: ./Bluemind-cloudrun-terraform
- 
+        ls -l ./Bluemind-cloudrun-terraform || echo "Folder not found"
+
     - name: Terraform Init
-      run: terraform init
-      working-directory: ./Bluemind-cloudrun-terraform
+      run: |
+        terraform -chdir=./Bluemind-cloudrun-terraform init
 
     - name: Terraform Plan
-      run: terraform plan -var="image_url=${{ steps.digest.outputs.digest }}"
-      working-directory: ./Bluemind-cloudrun-terraform
+      run: |
+        terraform -chdir=./Bluemind-cloudrun-terraform plan -var="image_url=${{ steps.digest.outputs.digest }}"
 
     - name: Terraform Apply
-      run: terraform apply -auto-approve -var="image_url=${{ steps.digest.outputs.digest }}"
-      working-directory: ./Bluemind-cloudrun-terraform
+      run: |
+        terraform -chdir=./Bluemind-cloudrun-terraform apply -auto-approve -var="image_url=${{ steps.digest.outputs.digest }}"
+
