@@ -10,7 +10,6 @@ resource "google_cloud_run_service" "default" {
         volume_mounts {
           name       = "gcs-creds"
           mount_path = "/secrets"
-          read_only  = true
         }
 
         env {
@@ -89,7 +88,6 @@ resource "google_cloud_run_service" "default" {
         }
       }
 
-      # ✅ Secret volume attached here
       volumes {
         name = "gcs-creds"
         secret {
