@@ -47,70 +47,52 @@ jobs:
         FULL_IMAGE="northamerica-northeast2-docker.pkg.dev/bluemind-d6c37/blue-mind-prod-repo-gcp/bluemind-app@$DIGEST"
         echo "digest=$FULL_IMAGE" >> "$GITHUB_OUTPUT"
 
-    # Step 7: Export TF_VAR_ secrets to environment
-    - name: Export Terraform Variables from GitHub Secrets
-      run: |
-        echo "TF_VAR_project_id=${{ secrets.TF_PROJECT_ID }}" >> $GITHUB_ENV
-        echo "TF_VAR_region=${{ secrets.TF_REGION }}" >> $GITHUB_ENV
-        echo "TF_VAR_db_connection_name=${{ secrets.TF_DB_CONNECTION_NAME }}" >> $GITHUB_ENV
-        echo "TF_VAR_db_user=${{ secrets.TF_DB_USER }}" >> $GITHUB_ENV
-        echo "TF_VAR_db_secret_id=${{ secrets.TF_DB_SECRET_ID }}" >> $GITHUB_ENV
-        echo "TF_VAR_db_port=${{ secrets.TF_DB_PORT }}" >> $GITHUB_ENV
-        echo "TF_VAR_db_name=${{ secrets.TF_DB_NAME }}" >> $GITHUB_ENV
-        echo "TF_VAR_email_user=${{ secrets.TF_EMAIL_USER }}" >> $GITHUB_ENV
-        echo "TF_VAR_email_password=${{ secrets.TF_EMAIL_PASSWORD }}" >> $GITHUB_ENV
-        echo "TF_VAR_jwt_secret=${{ secrets.TF_JWT_SECRET }}" >> $GITHUB_ENV
-        echo "TF_VAR_secret_key=${{ secrets.TF_SECRET_KEY }}" >> $GITHUB_ENV
-        echo "TF_VAR_gemini_key=${{ secrets.TF_GEMINI_KEY }}" >> $GITHUB_ENV
-        echo "TF_VAR_gcs_bucket_name=${{ secrets.TF_GCS_BUCKET_NAME }}" >> $GITHUB_ENV
-
-    # Step 8: Debug - list Terraform files
+    # Step 7: Debug - list Terraform files
     - name: List Terraform Files (debug)
       run: ls -al
       working-directory: ./Bluemind-cloudrun-terraform
 
-    # Step 9: Debug - find *.tf files
+    # Step 8: Debug - find *.tf files
     - name: Check for .tf files
       run: find . -name "*.tf"
       working-directory: ./Bluemind-cloudrun-terraform
 
-    # Step 10: Terraform Init
+    # Step 9: Terraform Init
     - name: Terraform Init
       run: terraform -chdir=./Bluemind-cloudrun-terraform init
 
-    # Step 11: Terraform Plan
-- name: Terraform Plan
-  run: terraform -chdir=./Bluemind-cloudrun-terraform plan \
-    -var="image_url=${{ steps.digest.outputs.digest }}" \
-    -var="project_id=${{ secrets.PROJECT_ID }}" \
-    -var="region=${{ secrets.REGION }}" \
-    -var="db_connection_name=${{ secrets.DB_CONNECTION_NAME }}" \
-    -var="db_user=${{ secrets.DB_USER }}" \
-    -var="db_secret_id=${{ secrets.DB_SECRET_ID }}" \
-    -var="db_port=${{ secrets.DB_PORT }}" \
-    -var="db_name=${{ secrets.DB_NAME }}" \
-    -var="email_user=${{ secrets.EMAIL_USER }}" \
-    -var="email_password=${{ secrets.EMAIL_PASSWORD }}" \
-    -var="jwt_secret=${{ secrets.JWT_SECRET }}" \
-    -var="secret_key=${{ secrets.SECRET_KEY }}" \
-    -var="gemini_key=${{ secrets.GEMINI_KEY }}" \
-    -var="gcs_bucket_name=${{ secrets.GCS_BUCKET_NAME }}"
+    # Step 10: Terraform Plan
+    - name: Terraform Plan
+      run: terraform -chdir=./Bluemind-cloudrun-terraform plan \
+        -var="image_url=${{ steps.digest.outputs.digest }}" \
+        -var="project_id=${{ secrets.PROJECT_ID }}" \
+        -var="region=${{ secrets.REGION }}" \
+        -var="db_connection_name=${{ secrets.DB_CONNECTION_NAME }}" \
+        -var="db_user=${{ secrets.DB_USER }}" \
+        -var="db_secret_id=${{ secrets.DB_SECRET_ID }}" \
+        -var="db_port=${{ secrets.DB_PORT }}" \
+        -var="db_name=${{ secrets.DB_NAME }}" \
+        -var="email_user=${{ secrets.EMAIL_USER }}" \
+        -var="email_password=${{ secrets.EMAIL_PASSWORD }}" \
+        -var="jwt_secret=${{ secrets.JWT_SECRET }}" \
+        -var="secret_key=${{ secrets.SECRET_KEY }}" \
+        -var="gemini_key=${{ secrets.GEMINI_KEY }}" \
+        -var="gcs_bucket_name=${{ secrets.GCS_BUCKET_NAME }}"
 
-
-    # Step 12: Terraform Apply
+    # Step 11: Terraform Apply
     - name: Terraform Apply
       run: terraform -chdir=./Bluemind-cloudrun-terraform apply -auto-approve \
-           -var="image_url=${{ steps.digest.outputs.digest }}"
-           -var="project_id=${{ secrets.PROJECT_ID }}" \
-           -var="region=${{ secrets.REGION }}" \
-           -var="db_connection_name=${{ secrets.DB_CONNECTION_NAME }}" \
-           -var="db_user=${{ secrets.DB_USER }}" \
-           -var="db_secret_id=${{ secrets.DB_SECRET_ID }}" \
-           -var="db_port=${{ secrets.DB_PORT }}" \
-           -var="db_name=${{ secrets.DB_NAME }}" \
-           -var="email_user=${{ secrets.EMAIL_USER }}" \
-           -var="email_password=${{ secrets.EMAIL_PASSWORD }}" \
-           -var="jwt_secret=${{ secrets.JWT_SECRET }}" \
-           -var="secret_key=${{ secrets.SECRET_KEY }}" \
-           -var="gemini_key=${{ secrets.GEMINI_KEY }}" \
-           -var="gcs_bucket_name=${{ secrets.GCS_BUCKET_NAME }}"
+        -var="image_url=${{ steps.digest.outputs.digest }}" \
+        -var="project_id=${{ secrets.PROJECT_ID }}" \
+        -var="region=${{ secrets.REGION }}" \
+        -var="db_connection_name=${{ secrets.DB_CONNECTION_NAME }}" \
+        -var="db_user=${{ secrets.DB_USER }}" \
+        -var="db_secret_id=${{ secrets.DB_SECRET_ID }}" \
+        -var="db_port=${{ secrets.DB_PORT }}" \
+        -var="db_name=${{ secrets.DB_NAME }}" \
+        -var="email_user=${{ secrets.EMAIL_USER }}" \
+        -var="email_password=${{ secrets.EMAIL_PASSWORD }}" \
+        -var="jwt_secret=${{ secrets.JWT_SECRET }}" \
+        -var="secret_key=${{ secrets.SECRET_KEY }}" \
+        -var="gemini_key=${{ secrets.GEMINI_KEY }}" \
+        -var="gcs_bucket_name=${{ secrets.GCS_BUCKET_NAME }}"
