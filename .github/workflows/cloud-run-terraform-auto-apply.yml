@@ -64,7 +64,8 @@ jobs:
     # Step 10: Terraform Plan
     - name: Terraform Plan
       run: |
-        terraform -chdir=./Bluemind-cloudrun-terraform plan \
+        cd Bluemind-cloudrun-terraform
+        terraform plan \
           -var="image_url=${{ steps.digest.outputs.digest }}" \
           -var="project_id=${{ secrets.PROJECT_ID }}" \
           -var="region=${{ secrets.REGION }}" \
@@ -79,12 +80,14 @@ jobs:
           -var="secret_key=${{ secrets.SECRET_KEY }}" \
           -var="gemini_key=${{ secrets.GEMINI_KEY }}" \
           -var="gcs_bucket_name=${{ secrets.GCS_BUCKET_NAME }}"
+
 
 
     # Step 11: Terraform Apply
     - name: Terraform Apply
       run: |
-        terraform -chdir=./Bluemind-cloudrun-terraform apply -auto-approve \
+        cd Bluemind-cloudrun-terraform
+        terraform apply -auto-approve \
           -var="image_url=${{ steps.digest.outputs.digest }}" \
           -var="project_id=${{ secrets.PROJECT_ID }}" \
           -var="region=${{ secrets.REGION }}" \
@@ -99,4 +102,5 @@ jobs:
           -var="secret_key=${{ secrets.SECRET_KEY }}" \
           -var="gemini_key=${{ secrets.GEMINI_KEY }}" \
           -var="gcs_bucket_name=${{ secrets.GCS_BUCKET_NAME }}"
+
 
