@@ -1,38 +1,58 @@
-name: Terraform Plan on Image Push
+name: Auto Terraform Apply on Image Push
 
 on:
   repository_dispatch:
     types: [cloudbuild-image-pushed]
 
 jobs:
-  terraform:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
+      # Step 1: Checkout Terraform Code
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: 1.8.5 # or your required version
-
+      # Step 2: Authenticate to GCP
       - name: Authenticate to GCP
         uses: google-github-actions/auth@v1
         with:
           credentials_json: ${{ secrets.GCP_CREDENTIALS }}
 
+      # Step 3: Setup gcloud CLI
+      - name: Setup gcloud CLI
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          version: 'latest'
+
+      # Step 4: Setup Terraform
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.6.6
+
+      # Step 5: Fetch Image Digest
+      - name: Get Image Digest
+        id: digest
+        run: |
+          IMAGE="northamerica-northeast2-docker.pkg.dev/bluemind-d6c37/blue-mind-prod-repo-gcp/bluemind-app:${{ github.event.client_payload.sha }}"
+          DIGEST=$(gcloud artifacts docker images describe "$IMAGE" --format='value(image_summary.digest)')
+          FULL_IMAGE="northamerica-northeast2-docker.pkg.dev/bluemind-d6c37/blue-mind-prod-repo-gcp/bluemind-app@$DIGEST"
+          echo "digest=$FULL_IMAGE" >> "$GITHUB_OUTPUT"
+
+      # Step 6: Terraform Init
       - name: Terraform Init
         working-directory: ./Bluemind-cloudrun-terraform
         run: terraform init
 
+      # Step 7: Terraform Plan
       - name: Terraform Plan
         working-directory: ./Bluemind-cloudrun-terraform
         run: |
           terraform plan \
-            -var="image_url=${{ secrets.IMAGE_URL }}" \
-            -var="project_id=${{ secrets.GCP_PROJECT_ID }}" \
-            -var="region=${{ secrets.GCP_REGION }}" \
+            -var="image_url=${{ steps.digest.outputs.digest }}" \
+            -var="project_id=${{ secrets.PROJECT_ID }}" \
+            -var="region=${{ secrets.REGION }}" \
             -var="db_connection_name=${{ secrets.DB_CONNECTION_NAME }}" \
             -var="db_user=${{ secrets.DB_USER }}" \
             -var="db_secret_id=${{ secrets.DB_SECRET_ID }}" \
@@ -45,8 +65,7 @@ jobs:
             -var="gemini_key=${{ secrets.GEMINI_KEY }}" \
             -var="gcs_bucket_name=${{ secrets.GCS_BUCKET_NAME }}"
 
-
-      # Step 11: Terraform Apply
+      # Step 8: Terraform Apply
       - name: Terraform Apply
         working-directory: ./Bluemind-cloudrun-terraform
         run: |
