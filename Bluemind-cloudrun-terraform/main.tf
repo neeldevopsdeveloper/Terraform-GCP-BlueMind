@@ -11,6 +11,15 @@ resource "google_cloud_run_service" "default" {
          name  = "GCS_BUCKET_NAME"
          value = var.gcs_bucket_name
        }
+        env {
+          name = "GCS_CREDENTIALS"
+          value_from {
+            secret_key_ref {
+              name = "gcs-service-account"
+              key  = "latest"
+            }
+          }
+        }
 
         env {
           name = "GOOGLE_GEMINI_API_KEY"
