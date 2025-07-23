@@ -47,8 +47,9 @@ jobs:
 
     - name: Check for .tf files
       run: |
-        find . -name "*.tf"
-
+       find . -name "*.tf"
+      working-directory: ./Bluemind-cloudrun-terraform
+ 
     - name: Terraform Init
       run: terraform init
       working-directory: ./Bluemind-cloudrun-terraform
