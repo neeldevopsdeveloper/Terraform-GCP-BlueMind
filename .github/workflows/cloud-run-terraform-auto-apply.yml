@@ -49,10 +49,6 @@ jobs:
       run: find . -name "*.tf"
       working-directory: ./Bluemind-cloudrun-terraform
 
-    - name: Sanity check: Does Terraform folder exist?
-      run: |
-        ls -l ./Bluemind-cloudrun-terraform || echo "Folder not found"
-
     - name: Terraform Init
       run: |
         terraform -chdir=./Bluemind-cloudrun-terraform init
