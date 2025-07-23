@@ -1,73 +1,38 @@
-name: Auto Terraform Apply on Image Push
+name: Terraform Plan on Image Push
 
 on:
   repository_dispatch:
     types: [cloudbuild-image-pushed]
 
 jobs:
-  deploy:
+  terraform:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout Code
-      - name: Checkout Terraform Code
+      - name: Checkout Code
         uses: actions/checkout@v3
 
-      # Step 2: Authenticate to GCP
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.8.5 # or your required version
+
       - name: Authenticate to GCP
         uses: google-github-actions/auth@v1
         with:
           credentials_json: ${{ secrets.GCP_CREDENTIALS }}
 
-      # Step 3: Setup gcloud CLI
-      - name: Setup gcloud CLI
-        uses: google-github-actions/setup-gcloud@v1
-        with:
-          version: 'latest'
-
-      # Step 4: Setup Terraform
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
-        with:
-          terraform_version: 1.6.6
-          cli_config_credentials: false
-
-      # Step 5: Check Terraform Version
-      - name: Check Terraform Version
-        run: |
-          which terraform
-          terraform version
-
-      # Step 6: Get Image Digest from Artifact Registry
-      - name: Get Image Digest
-        id: digest
-        run: |
-          IMAGE="northamerica-northeast2-docker.pkg.dev/bluemind-d6c37/blue-mind-prod-repo-gcp/bluemind-app:${{ github.event.client_payload.sha }}"
-          DIGEST=$(gcloud artifacts docker images describe "$IMAGE" --format='value(image_summary.digest)')
-          FULL_IMAGE="northamerica-northeast2-docker.pkg.dev/bluemind-d6c37/blue-mind-prod-repo-gcp/bluemind-app@$DIGEST"
-          echo "digest=$FULL_IMAGE" >> "$GITHUB_OUTPUT"
-
-      # Step 7: Debug - list Terraform files
-      - name: List Terraform Files (debug)
-        run: ls -al
-        working-directory: ./Bluemind-cloudrun-terraform
-
-      # Step 8: Debug - find *.tf files
-      - name: Check for .tf files
-        run: find . -name "*.tf"
-        working-directory: ./Bluemind-cloudrun-terraform
-
-      # Step 9: Terraform Init
       - name: Terraform Init
-        run: terraform -chdir=./Bluemind-cloudrun-terraform init
+        working-directory: ./Bluemind-cloudrun-terraform
+        run: terraform init
 
-      # Step 10: Terraform Plan
       - name: Terraform Plan
+        working-directory: ./Bluemind-cloudrun-terraform
         run: |
-          terraform -chdir=./Bluemind-cloudrun-terraform plan \
-            -var="image_url=${{ steps.digest.outputs.digest }}" \
-            -var="project_id=${{ secrets.PROJECT_ID }}" \
-            -var="region=${{ secrets.REGION }}" \
+          terraform plan \
+            -var="image_url=${{ secrets.IMAGE_URL }}" \
+            -var="project_id=${{ secrets.GCP_PROJECT_ID }}" \
+            -var="region=${{ secrets.GCP_REGION }}" \
             -var="db_connection_name=${{ secrets.DB_CONNECTION_NAME }}" \
             -var="db_user=${{ secrets.DB_USER }}" \
             -var="db_secret_id=${{ secrets.DB_SECRET_ID }}" \
@@ -80,10 +45,12 @@ jobs:
             -var="gemini_key=${{ secrets.GEMINI_KEY }}" \
             -var="gcs_bucket_name=${{ secrets.GCS_BUCKET_NAME }}"
 
+
       # Step 11: Terraform Apply
       - name: Terraform Apply
+        working-directory: ./Bluemind-cloudrun-terraform
         run: |
-          terraform -chdir=./Bluemind-cloudrun-terraform apply -auto-approve \
+          terraform apply auto-approve  \
             -var="image_url=${{ steps.digest.outputs.digest }}" \
             -var="project_id=${{ secrets.PROJECT_ID }}" \
             -var="region=${{ secrets.REGION }}" \
