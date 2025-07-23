@@ -9,7 +9,7 @@ resource "google_cloud_run_service" "default" {
 
        env {
          name  = "GCS_BUCKET_NAME"
-         value = "var.gcs_bucket_name"
+         value = var.gcs_bucket_name
        }
 
         env {
