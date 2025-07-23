@@ -9,30 +9,36 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    # Step 1: Checkout Code
     - name: Checkout Terraform Code
       uses: actions/checkout@v3
 
+    # Step 2: Authenticate to GCP
     - name: Authenticate to GCP
       uses: google-github-actions/auth@v1
       with:
         credentials_json: ${{ secrets.GCP_CREDENTIALS }}
 
+    # Step 3: Setup gcloud CLI
     - name: Setup gcloud CLI
       uses: google-github-actions/setup-gcloud@v1
       with:
         version: 'latest'
 
+    # Step 4: Setup Terraform
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v2
       with:
         terraform_version: 1.6.6
         cli_config_credentials: false
 
+    # Step 5: Check Terraform Version
     - name: Check Terraform Version
       run: |
         which terraform
         terraform version
 
+    # Step 6: Get Image Digest
     - name: Get Image Digest from Artifact Registry
       id: digest
       run: |
@@ -41,19 +47,43 @@ jobs:
         FULL_IMAGE="northamerica-northeast2-docker.pkg.dev/bluemind-d6c37/blue-mind-prod-repo-gcp/bluemind-app@$DIGEST"
         echo "digest=$FULL_IMAGE" >> "$GITHUB_OUTPUT"
 
+    # Step 7: Export TF_VAR_ secrets to environment
+    - name: Export Terraform Variables from GitHub Secrets
+      run: |
+        echo "TF_VAR_project_id=${{ secrets.TF_PROJECT_ID }}" >> $GITHUB_ENV
+        echo "TF_VAR_region=${{ secrets.TF_REGION }}" >> $GITHUB_ENV
+        echo "TF_VAR_db_connection_name=${{ secrets.TF_DB_CONNECTION_NAME }}" >> $GITHUB_ENV
+        echo "TF_VAR_db_user=${{ secrets.TF_DB_USER }}" >> $GITHUB_ENV
+        echo "TF_VAR_db_secret_id=${{ secrets.TF_DB_SECRET_ID }}" >> $GITHUB_ENV
+        echo "TF_VAR_db_port=${{ secrets.TF_DB_PORT }}" >> $GITHUB_ENV
+        echo "TF_VAR_db_name=${{ secrets.TF_DB_NAME }}" >> $GITHUB_ENV
+        echo "TF_VAR_email_user=${{ secrets.TF_EMAIL_USER }}" >> $GITHUB_ENV
+        echo "TF_VAR_email_password=${{ secrets.TF_EMAIL_PASSWORD }}" >> $GITHUB_ENV
+        echo "TF_VAR_jwt_secret=${{ secrets.TF_JWT_SECRET }}" >> $GITHUB_ENV
+        echo "TF_VAR_secret_key=${{ secrets.TF_SECRET_KEY }}" >> $GITHUB_ENV
+        echo "TF_VAR_gemini_key=${{ secrets.TF_GEMINI_KEY }}" >> $GITHUB_ENV
+        echo "TF_VAR_gcs_bucket_name=${{ secrets.TF_GCS_BUCKET_NAME }}" >> $GITHUB_ENV
+
+    # Step 8: Debug - list Terraform files
     - name: List Terraform Files (debug)
       run: ls -al
       working-directory: ./Bluemind-cloudrun-terraform
 
+    # Step 9: Debug - find *.tf files
     - name: Check for .tf files
       run: find . -name "*.tf"
       working-directory: ./Bluemind-cloudrun-terraform
 
+    # Step 10: Terraform Init
     - name: Terraform Init
       run: terraform -chdir=./Bluemind-cloudrun-terraform init
 
+    # Step 11: Terraform Plan
     - name: Terraform Plan
-      run: terraform -chdir=./Bluemind-cloudrun-terraform plan -var="image_url=${{ steps.digest.outputs.digest }}"
+      run: terraform -chdir=./Bluemind-cloudrun-terraform plan \
+           -var="image_url=${{ steps.digest.outputs.digest }}"
 
+    # Step 12: Terraform Apply
     - name: Terraform Apply
-      run: terraform -chdir=./Bluemind-cloudrun-terraform apply -auto-approve -var="image_url=${{ steps.digest.outputs.digest }}"
+      run: terraform -chdir=./Bluemind-cloudrun-terraform apply -auto-approve \
+           -var="image_url=${{ steps.digest.outputs.digest }}"
