@@ -38,8 +38,8 @@ jobs:
         which terraform
         terraform version
 
-    # Step 6: Get Image Digest
-    - name: Get Image Digest from Artifact Registry
+    # Step 6: Get Image Digest from Artifact Registry
+    - name: Get Image Digest
       id: digest
       run: |
         IMAGE="northamerica-northeast2-docker.pkg.dev/bluemind-d6c37/blue-mind-prod-repo-gcp/bluemind-app:${{ github.event.client_payload.sha }}"
@@ -63,36 +63,38 @@ jobs:
 
     # Step 10: Terraform Plan
     - name: Terraform Plan
-      run: terraform -chdir=./Bluemind-cloudrun-terraform plan \
-        -var="image_url=${{ steps.digest.outputs.digest }}" \
-        -var="project_id=${{ secrets.PROJECT_ID }}" \
-        -var="region=${{ secrets.REGION }}" \
-        -var="db_connection_name=${{ secrets.DB_CONNECTION_NAME }}" \
-        -var="db_user=${{ secrets.DB_USER }}" \
-        -var="db_secret_id=${{ secrets.DB_SECRET_ID }}" \
-        -var="db_port=${{ secrets.DB_PORT }}" \
-        -var="db_name=${{ secrets.DB_NAME }}" \
-        -var="email_user=${{ secrets.EMAIL_USER }}" \
-        -var="email_password=${{ secrets.EMAIL_PASSWORD }}" \
-        -var="jwt_secret=${{ secrets.JWT_SECRET }}" \
-        -var="secret_key=${{ secrets.SECRET_KEY }}" \
-        -var="gemini_key=${{ secrets.GEMINI_KEY }}" \
+      run: >
+        terraform -chdir=./Bluemind-cloudrun-terraform plan
+        -var="image_url=${{ steps.digest.outputs.digest }}"
+        -var="project_id=${{ secrets.PROJECT_ID }}"
+        -var="region=${{ secrets.REGION }}"
+        -var="db_connection_name=${{ secrets.DB_CONNECTION_NAME }}"
+        -var="db_user=${{ secrets.DB_USER }}"
+        -var="db_secret_id=${{ secrets.DB_SECRET_ID }}"
+        -var="db_port=${{ secrets.DB_PORT }}"
+        -var="db_name=${{ secrets.DB_NAME }}"
+        -var="email_user=${{ secrets.EMAIL_USER }}"
+        -var="email_password=${{ secrets.EMAIL_PASSWORD }}"
+        -var="jwt_secret=${{ secrets.JWT_SECRET }}"
+        -var="secret_key=${{ secrets.SECRET_KEY }}"
+        -var="gemini_key=${{ secrets.GEMINI_KEY }}"
         -var="gcs_bucket_name=${{ secrets.GCS_BUCKET_NAME }}"
 
     # Step 11: Terraform Apply
     - name: Terraform Apply
-      run: terraform -chdir=./Bluemind-cloudrun-terraform apply -auto-approve \
-        -var="image_url=${{ steps.digest.outputs.digest }}" \
-        -var="project_id=${{ secrets.PROJECT_ID }}" \
-        -var="region=${{ secrets.REGION }}" \
-        -var="db_connection_name=${{ secrets.DB_CONNECTION_NAME }}" \
-        -var="db_user=${{ secrets.DB_USER }}" \
-        -var="db_secret_id=${{ secrets.DB_SECRET_ID }}" \
-        -var="db_port=${{ secrets.DB_PORT }}" \
-        -var="db_name=${{ secrets.DB_NAME }}" \
-        -var="email_user=${{ secrets.EMAIL_USER }}" \
-        -var="email_password=${{ secrets.EMAIL_PASSWORD }}" \
-        -var="jwt_secret=${{ secrets.JWT_SECRET }}" \
-        -var="secret_key=${{ secrets.SECRET_KEY }}" \
-        -var="gemini_key=${{ secrets.GEMINI_KEY }}" \
+      run: >
+        terraform -chdir=./Bluemind-cloudrun-terraform apply -auto-approve
+        -var="image_url=${{ steps.digest.outputs.digest }}"
+        -var="project_id=${{ secrets.PROJECT_ID }}"
+        -var="region=${{ secrets.REGION }}"
+        -var="db_connection_name=${{ secrets.DB_CONNECTION_NAME }}"
+        -var="db_user=${{ secrets.DB_USER }}"
+        -var="db_secret_id=${{ secrets.DB_SECRET_ID }}"
+        -var="db_port=${{ secrets.DB_PORT }}"
+        -var="db_name=${{ secrets.DB_NAME }}"
+        -var="email_user=${{ secrets.EMAIL_USER }}"
+        -var="email_password=${{ secrets.EMAIL_PASSWORD }}"
+        -var="jwt_secret=${{ secrets.JWT_SECRET }}"
+        -var="secret_key=${{ secrets.SECRET_KEY }}"
+        -var="gemini_key=${{ secrets.GEMINI_KEY }}"
         -var="gcs_bucket_name=${{ secrets.GCS_BUCKET_NAME }}"
