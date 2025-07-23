@@ -34,7 +34,7 @@ resource "google_cloud_run_service" "default" {
 
       env {
         name = "DB_PORT"
-        value = "var.db_port"
+        value = var.db_port
       }
 
       env {
