@@ -64,7 +64,7 @@ jobs:
       # Step 10: Terraform Plan
       - name: Terraform Plan
         run: |
-          $TERRAFORM_CLI_PATH/terraform-bin -chdir=./Bluemind-cloudrun-terraform plan \
+          terraform -chdir=./Bluemind-cloudrun-terraform plan \
             -var="image_url=${{ steps.digest.outputs.digest }}" \
             -var="project_id=${{ secrets.PROJECT_ID }}" \
             -var="region=${{ secrets.REGION }}" \
@@ -79,13 +79,12 @@ jobs:
             -var="secret_key=${{ secrets.SECRET_KEY }}" \
             -var="gemini_key=${{ secrets.GEMINI_KEY }}" \
             -var="gcs_bucket_name=${{ secrets.GCS_BUCKET_NAME }}"
-        env:
-          TERRAFORM_CLI_PATH: /home/runner/work/_temp/5481c919-73e5-42de-9bb1-95a35b27ccca
+
 
       # Step 11: Terraform Apply
       - name: Terraform Apply
         run: |
-          $TERRAFORM_CLI_PATH/terraform-bin -chdir=./Bluemind-cloudrun-terraform apply -auto-approve \
+          terraform -chdir=./Bluemind-cloudrun-terraform apply -auto-approve \
             -var="image_url=${{ steps.digest.outputs.digest }}" \
             -var="project_id=${{ secrets.PROJECT_ID }}" \
             -var="region=${{ secrets.REGION }}" \
@@ -100,5 +99,4 @@ jobs:
             -var="secret_key=${{ secrets.SECRET_KEY }}" \
             -var="gemini_key=${{ secrets.GEMINI_KEY }}" \
             -var="gcs_bucket_name=${{ secrets.GCS_BUCKET_NAME }}"
-        env:
-          TERRAFORM_CLI_PATH: /home/runner/work/_temp/5481c919-73e5-42de-9bb1-95a35b27ccca
+
