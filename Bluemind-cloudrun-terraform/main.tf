@@ -87,7 +87,7 @@ resource "google_cloud_run_service" "default" {
 
           items {
             path    = "gcs-key.json"
-            version = "latest"
+            key = "latest"
           }
         }
       }
