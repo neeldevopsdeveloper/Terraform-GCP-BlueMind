@@ -60,3 +60,8 @@ variable "db_port" {
   description = "Port number for the database"
   default     = 3306
 }
+
+variable "cloud_run_sa" {
+  description = "The service account email to run the Cloud Run service with."
+  type        = string
+}
