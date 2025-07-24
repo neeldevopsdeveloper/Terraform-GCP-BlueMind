@@ -5,6 +5,7 @@ resource "google_cloud_run_service" "default" {
   template {
     spec {
       service_account_name = var.cloud_run_sa
+
       containers {
         image = var.image_url
 
@@ -15,14 +16,13 @@ resource "google_cloud_run_service" "default" {
 
         env {
           name  = "GOOGLE_APPLICATION_CREDENTIALS"
-          value = "/secrets/latest"
+          value = "/secrets/gcs-key.json"
         }
 
         env {
           name  = "GCS_BUCKET_NAME"
           value = var.gcs_bucket_name
         }
-
 
         env {
           name  = "GOOGLE_GEMINI_API_KEY"
@@ -84,6 +84,11 @@ resource "google_cloud_run_service" "default" {
         name = "gcs-creds"
         secret {
           secret_name = "gcs-service-account"
+
+          items {
+            path    = "gcs-key.json"
+            version = "latest"
+          }
         }
       }
     }
