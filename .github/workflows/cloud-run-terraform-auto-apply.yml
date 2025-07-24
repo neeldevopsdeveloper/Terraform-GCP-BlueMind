@@ -52,6 +52,7 @@ jobs:
           TF_LOG: DEBUG
         run: |
           terraform plan \
+            -var="cloud_run_sa=${{ secrets.CLOUD_RUN_SA }}" \
             -var="image_url=${{ steps.digest.outputs.digest }}" \
             -var="image_tag=${{ github.event.client_payload.sha }}" \
             -var="project_id=${{ secrets.PROJECT_ID }}" \
