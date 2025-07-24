@@ -4,6 +4,7 @@ resource "google_cloud_run_service" "default" {
 
   template {
     spec {
+      service_account_name = var.cloud_run_sa
       containers {
         image = var.image_url
 
