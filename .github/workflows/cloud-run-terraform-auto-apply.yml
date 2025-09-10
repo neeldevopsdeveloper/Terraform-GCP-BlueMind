@@ -67,6 +67,8 @@ jobs:
             -var="jwt_secret=${{ secrets.JWT_SECRET }}" \
             -var="secret_key=${{ secrets.SECRET_KEY }}" \
             -var="gemini_key=${{ secrets.GEMINI_KEY }}" \
+            -var="stripe_secret_key=${{ secrets.STRIPE_SECRET_KEY }}" \
+            -var="stripe_publishable_key=${{ secrets.STRIPE_PUBLISHABLE_KEY }}" \
             -var="gcs_bucket_name=${{ secrets.GCS_BUCKET_NAME }}"
 
       # Step 8: Terraform Apply
@@ -91,4 +93,6 @@ jobs:
             -var="jwt_secret=${{ secrets.JWT_SECRET }}" \
             -var="secret_key=${{ secrets.SECRET_KEY }}" \
             -var="gemini_key=${{ secrets.GEMINI_KEY }}" \
+            -var="stripe_secret_key=${{ secrets.STRIPE_SECRET_KEY }}" \
+            -var="stripe_publishable_key=${{ secrets.STRIPE_PUBLISHABLE_KEY }}" \
             -var="gcs_bucket_name=${{ secrets.GCS_BUCKET_NAME }}"
