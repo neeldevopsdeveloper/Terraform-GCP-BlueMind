@@ -65,3 +65,12 @@ variable "cloud_run_sa" {
   description = "The service account email to run the Cloud Run service with."
   type        = string
 }
+variable "stripe_secret_key" {
+  description = "Secret Manager ID for Stripe Secret Key"
+  type        = string
+}
+
+variable "stripe_publishable_key" {
+  description = "Secret Manager ID for Stripe Publishable Key"
+  type        = string
+}
