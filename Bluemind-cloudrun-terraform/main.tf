@@ -78,6 +78,26 @@ resource "google_cloud_run_service" "default" {
             }
           }
         }
+
+        env {
+          name = "STRIPE_SECRET_KEY"
+          value_from {
+            secret_key_ref {
+              name = var.stripe_secret_key
+              key  = "latest"
+            }
+          }
+        }
+
+        env {
+          name = "STRIPE_PUBLISHABLE_KEY"
+          value_from {
+            secret_key_ref {
+              name = var.stripe_publishable_key
+              key  = "latest"
+            }
+          }
+        }
       }
 
       volumes {
@@ -86,8 +106,8 @@ resource "google_cloud_run_service" "default" {
           secret_name = "gcs-service-account"
 
           items {
-            path    = "gcs-key.json"
-            key = "latest"
+            path = "gcs-key.json"
+            key  = "latest"
           }
         }
       }
