@@ -69,6 +69,9 @@ jobs:
             -var="gemini_key=${{ secrets.GEMINI_KEY }}" \
             -var="stripe_secret_key=${{ secrets.STRIPE_SECRET_KEY }}" \
             -var="stripe_publishable_key=${{ secrets.STRIPE_PUBLISHABLE_KEY }}" \
+            -var="stripe_monthly_price_id=${{ secrets.STRIPE_MONTHLY_PRICE_ID }}" \
+            -var="stripe_annual_price_id=${{ secrets.STRIPE_ANNUAL_PRICE_ID }}" \
+            -var="canada_tax_rate_ids_prod=${{ secrets.CANADA_TAX_RATE_IDS_PROD }}" \
             -var="gcs_bucket_name=${{ secrets.GCS_BUCKET_NAME }}"
 
       # Step 8: Terraform Apply
@@ -95,4 +98,7 @@ jobs:
             -var="gemini_key=${{ secrets.GEMINI_KEY }}" \
             -var="stripe_secret_key=${{ secrets.STRIPE_SECRET_KEY }}" \
             -var="stripe_publishable_key=${{ secrets.STRIPE_PUBLISHABLE_KEY }}" \
+            -var="stripe_monthly_price_id=${{ secrets.STRIPE_MONTHLY_PRICE_ID }}" \
+            -var="stripe_annual_price_id=${{ secrets.STRIPE_ANNUAL_PRICE_ID }}" \
+            -var="canada_tax_rate_ids_prod=${{ secrets.CANADA_TAX_RATE_IDS_PROD }}" \
             -var="gcs_bucket_name=${{ secrets.GCS_BUCKET_NAME }}"
