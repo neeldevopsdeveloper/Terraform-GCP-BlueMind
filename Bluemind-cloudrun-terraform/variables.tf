@@ -27,6 +27,13 @@ variable "db_name" {
   type        = string
   description = "MySQL database name"
 }
+
+variable "db_port" {
+  type        = number
+  description = "Port number for the database"
+  default     = 3306
+}
+
 variable "email_user" {
   description = "Email username used for authentication"
   type        = string
@@ -38,33 +45,30 @@ variable "email_password" {
   type        = string
   sensitive   = true
 }
+
 variable "jwt_secret" {
   type        = string
+  description = "JWT secret key for token signing"
   sensitive   = true
 }
+
 variable "secret_key" {
   type        = string
-  description = "Name of the SECRET_KEY in Secret Manager"
+  description = "Application SECRET_KEY (from Secret Manager)"
   sensitive   = true
-
 }
 
 variable "gemini_key" {
   type        = string
-  description = "Name of the Gemini API key in Secret Manager"
+  description = "Google Gemini API key (from Secret Manager)"
   sensitive   = true
-
-}
-variable "db_port" {
-  type        = number
-  description = "Port number for the database"
-  default     = 3306
 }
 
 variable "cloud_run_sa" {
-  description = "The service account email to run the Cloud Run service with."
+  description = "Service account email used by Cloud Run"
   type        = string
 }
+
 variable "stripe_secret_key" {
   description = "Secret Manager ID for Stripe Secret Key"
   type        = string
@@ -72,5 +76,22 @@ variable "stripe_secret_key" {
 
 variable "stripe_publishable_key" {
   description = "Secret Manager ID for Stripe Publishable Key"
+  type        = string
+}
+
+# --- Newly added Stripe and Tax Secret variables ---
+
+variable "stripe_monthly_price_id" {
+  description = "Secret Manager ID for Stripe Monthly Price ID"
+  type        = string
+}
+
+variable "stripe_annual_price_id" {
+  description = "Secret Manager ID for Stripe Annual Price ID"
+  type        = string
+}
+
+variable "canada_tax_rate_ids_prod" {
+  description = "Secret Manager ID for Canada Tax Rate IDs (production)"
   type        = string
 }
