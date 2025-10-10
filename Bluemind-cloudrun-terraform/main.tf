@@ -69,6 +69,7 @@ resource "google_cloud_run_service" "default" {
           value = var.jwt_secret
         }
 
+        # --- Secrets from Secret Manager ---
         env {
           name = "DB_PASSWORD"
           value_from {
@@ -94,6 +95,37 @@ resource "google_cloud_run_service" "default" {
           value_from {
             secret_key_ref {
               name = var.stripe_publishable_key
+              key  = "latest"
+            }
+          }
+        }
+
+        # --- Newly added Stripe and Tax Secrets ---
+        env {
+          name = "STRIPE_MONTHLY_PRICE_ID"
+          value_from {
+            secret_key_ref {
+              name = var.stripe_monthly_price_id
+              key  = "latest"
+            }
+          }
+        }
+
+        env {
+          name = "STRIPE_ANNUAL_PRICE_ID"
+          value_from {
+            secret_key_ref {
+              name = var.stripe_annual_price_id
+              key  = "latest"
+            }
+          }
+        }
+
+        env {
+          name = "CANADA_TAX_RATE_IDS_PROD"
+          value_from {
+            secret_key_ref {
+              name = var.canada_tax_rate_ids_prod
               key  = "latest"
             }
           }
