@@ -14,6 +14,7 @@ resource "google_cloud_run_service" "default" {
           mount_path = "/secrets"
         }
 
+        # --- Regular environment variables ---
         env {
           name  = "GOOGLE_APPLICATION_CREDENTIALS"
           value = "/secrets/gcs-key.json"
@@ -74,7 +75,7 @@ resource "google_cloud_run_service" "default" {
           name = "DB_PASSWORD"
           value_from {
             secret_key_ref {
-              name = var.db_secret_id
+              name = lower(var.db_secret_id)
               key  = "latest"
             }
           }
@@ -84,7 +85,7 @@ resource "google_cloud_run_service" "default" {
           name = "STRIPE_SECRET_KEY"
           value_from {
             secret_key_ref {
-              name = var.stripe_secret_key
+              name = lower(var.stripe_secret_key)
               key  = "latest"
             }
           }
@@ -94,7 +95,7 @@ resource "google_cloud_run_service" "default" {
           name = "STRIPE_PUBLISHABLE_KEY"
           value_from {
             secret_key_ref {
-              name = var.stripe_publishable_key
+              name = lower(var.stripe_publishable_key)
               key  = "latest"
             }
           }
@@ -105,7 +106,7 @@ resource "google_cloud_run_service" "default" {
           name = "STRIPE_MONTHLY_PRICE_ID"
           value_from {
             secret_key_ref {
-              name = var.stripe_monthly_price_id
+              name = lower(var.stripe_monthly_price_id)
               key  = "latest"
             }
           }
@@ -115,7 +116,7 @@ resource "google_cloud_run_service" "default" {
           name = "STRIPE_ANNUAL_PRICE_ID"
           value_from {
             secret_key_ref {
-              name = var.stripe_annual_price_id
+              name = lower(var.stripe_annual_price_id)
               key  = "latest"
             }
           }
@@ -125,7 +126,7 @@ resource "google_cloud_run_service" "default" {
           name = "CANADA_TAX_RATE_IDS_PROD"
           value_from {
             secret_key_ref {
-              name = var.canada_tax_rate_ids_prod
+              name = lower(var.canada_tax_rate_ids_prod)
               key  = "latest"
             }
           }
